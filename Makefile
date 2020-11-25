@@ -20,7 +20,6 @@ clean:
 	make -C /lib/modules/$(KVER)/build M=$(PWD) clean
 
 install:
-	sudo modprobe udp_tunnel
 	sudo install -v -m 755 -d /lib/modules/$(KVER)/
 	sudo install -v -m 644 gtp5g.ko /lib/modules/$(KVER)/gtp5g.ko
 	sudo depmod -a
