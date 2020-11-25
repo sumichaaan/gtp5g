@@ -3,7 +3,7 @@ KVERSION=$(shell uname -r)
 endif
 
 ifndef GTP5GVER
-KMODVER=$(shell git describe HEAD 2>/dev/null || git rev-parse --short HEAD)
+GTP5GVER=$(shell git describe HEAD 2>/dev/null || git rev-parse --short HEAD)
 endif
 
 CONFIG_MODULE_SIG=n
