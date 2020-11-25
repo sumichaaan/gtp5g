@@ -23,4 +23,4 @@ install:
 	sudo modprobe udp_tunnel
 	sudo install -v -m 755 -d /lib/modules/$(KVERSION)/
 	sudo install -v -m 644 gtp5g.ko /lib/modules/$(KVERSION)/gtp5g.ko
-	depmod -a
+	sudo depmod -a
