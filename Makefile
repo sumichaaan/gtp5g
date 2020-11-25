@@ -1,25 +1,26 @@
-PWD := $(shell pwd) 
-KVERSION := $(shell uname -r)
-INCLUDE_DIR = /usr/src/linux-headers-$(KVERSION)/
+ifndef KVERSION
+KVERSION=$(shell uname -r)
+endif
+
+ifndef GTP5GVER
+KMODVER=$(shell git describe HEAD 2>/dev/null || git rev-parse --short HEAD)
+endif
 
 CONFIG_MODULE_SIG=n
 MODULE_NAME = gtp5g
 obj-m := $(MODULE_NAME).o
 
-all:
-	make -C $(INCLUDE_DIR) M=$(PWD) modules
-clean:
-	make -C $(INCLUDE_DIR) M=$(PWD) clean
- 
-install:
-	modprobe udp_tunnel
-	cp $(MODULE_NAME).ko /lib/modules/`uname -r`/kernel/drivers/net
-	depmod -a
-	modprobe $(MODULE_NAME)
-	echo "gtp5g" >> /etc/modules
+buildprep:
+	sudo yum install -y gcc kernel-{core,devel,modules}-$(KVERSION) elfutils-libelf-devel
 
-uninstall:
-	rmmod $(MODULE_NAME)
-	rm -f /lib/modules/`uname -r`/kernel/drivers/net/$(MODULE_NAME).ko
+all:
+	make -C /lib/modules/$(KVERSION)/build M=$(PWD) EXTRA_CFLAGS=-DKMODVER=\\\"$(KMODVER)\\\" modules
+
+clean:
+	make -C /lib/modules/$(KVERSION)/build M=$(PWD) clean
+
+install:
+	sudo modprobe udp_tunnel
+	sudo install -v -m 755 -d /lib/modules/$(KVERSION)/
+	sudo install -v -m 644 gtp5g.ko /lib/modules/$(KVERSION)/gtp5g.ko
 	depmod -a
-	sed -zi "s/gtp5g\n//g" /etc/modules
