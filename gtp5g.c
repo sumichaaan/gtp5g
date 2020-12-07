@@ -1094,7 +1094,6 @@ static void pdr_context_free(struct rcu_head *head)
     if (pdi) {
         kfree(pdi->ue_addr_ipv4);
         kfree(pdi->f_teid);
-        kfree(pdr->pdi);
         kfree(pdr->far_id);
 
         sdf = pdi->sdf;
@@ -1109,6 +1108,7 @@ static void pdr_context_free(struct rcu_head *head)
             kfree(sdf->flow_label);
             kfree(sdf->bi_id);
         }
+        kfree(pdr->pdi);
     }
 
     unix_sock_client_delete(pdr);
